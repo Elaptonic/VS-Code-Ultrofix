@@ -1,7 +1,32 @@
 # Blockers & Task Dependencies
 
 ## Current Status
-No active blockers - all agents ready to start.
+Task 0.1 (session expiry / 401 handling) is complete on both backend and
+frontend. Two pre-existing issues were found during verification (2026-06-15)
+that do NOT block Task 0.1, but need their own follow-up task:
+
+1. URBAN-APP-TYPECHECK - BLOCKED - `pnpm --filter @workspace/urban-app run
+   typecheck` fails with 9 pre-existing errors across 5 files (none touched by
+   Task 0.1). This is the first time deps have been installed + typechecked on
+   this machine, so these were never caught before:
+   - app/_layout.tsx:68 - tuple type '[string]' has no index 1
+   - app/booking/[id].tsx:64,68,165 - UseQueryOptions missing 'queryKey'
+   - app/booking/[id].tsx:173 - BookingStatus vs "accepted" no overlap
+   - app/category/[id].tsx:29 - UseQueryOptions missing 'queryKey'
+   - app/service/[id].tsx:36,40 - UseQueryOptions missing 'queryKey'
+   - hooks/useProviderTracking.ts:57 - 'activeJob' possibly null
+   The "queryKey" errors look like an Orval/@tanstack/react-query version
+   mismatch in lib/api-client-react/src/generated/api.ts (generated file -
+   do not hand-edit; needs codegen/config investigation).
+
+2. API-SERVER-VITEST-WINDOWS - BLOCKED - `pnpm --filter @workspace/api-server
+   run test` (and any Vitest/Vite run) fails on this Windows machine:
+   "Cannot find module @rollup/rollup-win32-x64-msvc". Cause: pnpm-workspace.yaml
+   `overrides` strips ALL non-linux-x64 native binaries (rollup, esbuild,
+   lightningcss, @tailwindcss/oxide, etc.) with the comment "replit uses
+   linux-x64 only". This blocks running tests locally on Windows. Needs a
+   decision: either add win32-x64 binaries back to overrides, or run tests in
+   a Linux environment/container.
 
 ## Frontend Task Dependencies
 - Any screen/hook consuming a new or changed API endpoint depends on:

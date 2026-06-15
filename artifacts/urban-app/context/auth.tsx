@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { setAuthTokenGetter, setUnauthorizedHandler } from "@workspace/api-client-react";
 import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import type { ConfirmationResult as WebConfirmationResult } from "firebase/auth";
 import {
@@ -206,6 +206,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  // Any API call made through the generated React Query hooks that comes
+  // back 401 means the session is missing/expired — log out app-wide so
+  // AuthGate redirects to /login, without every screen needing its own check.
+  useEffect(() => {
+    setUnauthorizedHandler(async () => {
+      await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
+      setUser(null);
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   useEffect(() => {
     if (!user) {

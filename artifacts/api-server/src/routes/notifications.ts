@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { and, desc, eq } from "drizzle-orm";
 import { db, notificationsTable, usersTable } from "@workspace/db";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -30,9 +31,9 @@ router.patch("/notifications/:id", async (req, res) => {
       .where(eq(notificationsTable.id, id))
       .returning();
     if (!updated) return res.status(404).json({ error: "Not found" });
-    res.json(updated);
+    return res.json(updated);
   } catch {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -44,17 +45,14 @@ router.post("/notifications/mark-all-read", async (req, res) => {
       .update(notificationsTable)
       .set({ read: true })
       .where(and(eq(notificationsTable.userId, userId), eq(notificationsTable.read, false)));
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.post("/notifications/push-token", async (req, res) => {
+router.post("/notifications/push-token", requireAuth, async (req, res) => {
   try {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
     const userId = req.user!.id;
     const { pushToken } = req.body;
     if (!pushToken || typeof pushToken !== "string") {
@@ -64,9 +62,9 @@ router.post("/notifications/push-token", async (req, res) => {
       .update(usersTable)
       .set({ pushToken })
       .where(eq(usersTable.id, userId));
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

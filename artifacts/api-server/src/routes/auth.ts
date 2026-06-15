@@ -19,6 +19,7 @@ import {
   type SessionData,
 } from "../lib/auth";
 import { verifyFirebaseIdToken, type FirebaseClaims } from "../lib/firebaseVerify";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
@@ -129,12 +130,7 @@ router.post("/auth/logout", async (req: Request, res: Response) => {
   res.json(LogoutSessionResponse.parse({ success: true }));
 });
 
-router.patch("/auth/role", async (req: Request, res: Response) => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
+router.patch("/auth/role", requireAuth, async (req: Request, res: Response) => {
   const parsed = SetUserRoleBody.safeParse(req.body);
   if (!parsed.success) {
     res
@@ -148,7 +144,7 @@ router.patch("/auth/role", async (req: Request, res: Response) => {
   const [updated] = await db
     .update(usersTable)
     .set({ role, updatedAt: new Date() })
-    .where(eq(usersTable.id, req.user.id))
+    .where(eq(usersTable.id, req.user!.id))
     .returning();
 
   const sid = getSessionId(req);

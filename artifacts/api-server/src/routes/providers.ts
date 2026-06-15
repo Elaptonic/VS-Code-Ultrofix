@@ -1,6 +1,7 @@
 import { db, providersTable } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
 import { Router, type IRouter } from "express";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
@@ -16,16 +17,8 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-router.get("/providers/me", async (req, res): Promise<void> => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  const userId = (req.user as { id?: string } | undefined)?.id;
-  if (!userId) {
-    res.status(401).json({ error: "No user in session" });
-    return;
-  }
+router.get("/providers/me", requireAuth, async (req, res): Promise<void> => {
+  const userId = req.user!.id;
   const [provider] = await db
     .select()
     .from(providersTable)

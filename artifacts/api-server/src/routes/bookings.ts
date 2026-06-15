@@ -7,6 +7,7 @@ import { emitToUser } from "../lib/socket";
 import { sendPushNotification } from "../lib/push";
 import { emitProviderStats } from "./stats";
 import { dispatchNextVendor, seedDispatchQueue } from "../lib/dispatch";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
@@ -277,12 +278,7 @@ router.patch("/bookings/:id", async (req, res): Promise<void> => {
 
 // Dispatch log: admin/support only. Requires authentication + admin role.
 // Owners and providers do not have access — this is an internal support tool.
-router.get("/bookings/:id/dispatch-log", async (req, res): Promise<void> => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
+router.get("/bookings/:id/dispatch-log", requireAuth, async (req, res): Promise<void> => {
   const callerRole = (req.user as { role?: string } | undefined)?.role;
   if (callerRole !== "admin") {
     res.status(403).json({ error: "Forbidden: admin role required" });

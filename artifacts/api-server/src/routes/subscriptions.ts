@@ -1,19 +1,15 @@
 import { db, vendorSubscriptionsTable, providersTable } from "@workspace/db";
 import { and, desc, eq, gt } from "drizzle-orm";
 import { Router, type IRouter } from "express";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
-router.post("/subscriptions/activate", async (req, res): Promise<void> => {
-  if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
+router.post("/subscriptions/activate", requireAuth, async (req, res): Promise<void> => {
   const [provider] = await db
     .select({ id: providersTable.id })
     .from(providersTable)
-    .where(eq(providersTable.userId, req.user.id));
+    .where(eq(providersTable.userId, req.user!.id));
 
   if (!provider) {
     res.status(404).json({ error: "Provider profile not found. Complete onboarding first." });
@@ -53,16 +49,11 @@ router.post("/subscriptions/activate", async (req, res): Promise<void> => {
   });
 });
 
-router.get("/subscriptions/status", async (req, res): Promise<void> => {
-  if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
+router.get("/subscriptions/status", requireAuth, async (req, res): Promise<void> => {
   const [provider] = await db
     .select({ id: providersTable.id })
     .from(providersTable)
-    .where(eq(providersTable.userId, req.user.id));
+    .where(eq(providersTable.userId, req.user!.id));
 
   if (!provider) {
     res.json({ active: false, message: "No provider profile found." });

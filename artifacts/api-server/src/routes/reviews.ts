@@ -1,15 +1,11 @@
 import { bookingsTable, db, providersTable, reviewsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { Router, type IRouter } from "express";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
-router.post("/reviews", async (req, res): Promise<void> => {
-  if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
+router.post("/reviews", requireAuth, async (req, res): Promise<void> => {
   const { bookingId, rating, comment } = req.body ?? {};
 
   if (
@@ -30,7 +26,7 @@ router.post("/reviews", async (req, res): Promise<void> => {
     return;
   }
 
-  if (booking.userId !== req.user.id) {
+  if (booking.userId !== req.user!.id) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }
@@ -54,7 +50,7 @@ router.post("/reviews", async (req, res): Promise<void> => {
 
   const [review] = await db
     .insert(reviewsTable)
-    .values({ bookingId, providerId, consumerId: req.user.id, rating, comment })
+    .values({ bookingId, providerId, consumerId: req.user!.id, rating, comment })
     .returning();
 
   const allReviews = await db
@@ -76,15 +72,11 @@ router.post("/reviews", async (req, res): Promise<void> => {
   res.status(201).json(review);
 });
 
-router.get("/reviews", async (req, res): Promise<void> => {
-  if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
+router.get("/reviews", requireAuth, async (req, res): Promise<void> => {
   const reviews = await db
     .select()
     .from(reviewsTable)
-    .where(eq(reviewsTable.consumerId, req.user.id))
+    .where(eq(reviewsTable.consumerId, req.user!.id))
     .orderBy(reviewsTable.createdAt);
   res.json(reviews);
 });

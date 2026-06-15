@@ -1,14 +1,11 @@
 import { db, providersTable, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { Router, type IRouter, type Request, type Response } from "express";
+import { requireAuth } from "../middlewares/authMiddleware";
 
 const router: IRouter = Router();
 
-router.get("/onboarding/provider/status", async (req: Request, res: Response): Promise<void> => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
+router.get("/onboarding/provider/status", requireAuth, async (req: Request, res: Response): Promise<void> => {
   const userId = req.user!.id;
 
   const [provider] = await db
@@ -24,11 +21,7 @@ router.get("/onboarding/provider/status", async (req: Request, res: Response): P
   res.json({ exists: true, onboardingComplete: provider.onboardingComplete, provider });
 });
 
-router.post("/onboarding/provider", async (req: Request, res: Response): Promise<void> => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
+router.post("/onboarding/provider", requireAuth, async (req: Request, res: Response): Promise<void> => {
   const userId = req.user!.id;
 
   const { name, bio, category, specializations, serviceAreas, hourlyRate, experience, idDocumentUrl, latitude, longitude } = req.body;
@@ -89,11 +82,7 @@ router.post("/onboarding/provider", async (req: Request, res: Response): Promise
   res.json({ provider });
 });
 
-router.patch("/onboarding/provider", async (req: Request, res: Response): Promise<void> => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
+router.patch("/onboarding/provider", requireAuth, async (req: Request, res: Response): Promise<void> => {
   const userId = req.user!.id;
 
   const allowed = ["name", "bio", "category", "specializations", "serviceAreas", "hourlyRate", "experience", "idDocumentUrl", "latitude", "longitude"];

@@ -55,7 +55,7 @@ const searchNominatim = async (query: string): Promise<Prediction[]> => {
   const response = await fetch(url.toString(), { headers: { "User-Agent": NOMINATIM_UA } });
   if (!response.ok) throw new Error(`Nominatim search failed: ${response.status}`);
 
-  const results: any[] = await response.json();
+  const results = (await response.json()) as any[];
   const scored = results
     .map((item) => {
       const name = (item.name as string | undefined) ?? (item.display_name as string | undefined) ?? "";

@@ -43,3 +43,15 @@ export async function authMiddleware(
   req.user = session.user;
   next();
 }
+
+/**
+ * Rejects the request with 401 unless `authMiddleware` resolved a valid,
+ * non-expired session. Use on any route that requires a logged-in user.
+ */
+export function requireAuth(req: Request, res: Response, next: NextFunction): void {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
