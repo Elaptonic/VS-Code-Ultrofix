@@ -22,6 +22,7 @@ export function useProviderTracking(
 
   useEffect(() => {
     if (!activeJob || Platform.OS === "web") return;
+    const job = activeJob;
 
     let cancelled = false;
 
@@ -41,20 +42,19 @@ export function useProviderTracking(
             distanceInterval: 15,
           },
           (location) => {
-            if (!activeJob) return;
             emittersRef.current.emitLocation(
-              activeJob.bookingId,
+              job.bookingId,
               location.coords.latitude,
               location.coords.longitude,
-              activeJob.userId,
+              job.userId,
             );
             console.log(
-              `[tracking] Emitted location for booking ${activeJob.bookingId}: ` +
+              `[tracking] Emitted location for booking ${job.bookingId}: ` +
                 `${location.coords.latitude.toFixed(5)}, ${location.coords.longitude.toFixed(5)}`,
             );
           },
         );
-        console.log(`[tracking] Started GPS watch for booking ${activeJob.bookingId}`);
+        console.log(`[tracking] Started GPS watch for booking ${job.bookingId}`);
       } catch (err) {
         console.log("[tracking] Failed to start location watch:", err);
       }

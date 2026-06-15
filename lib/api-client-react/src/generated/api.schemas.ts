@@ -44,7 +44,9 @@ export interface Provider {
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus];
 
 export const BookingStatus = {
-  upcoming: "upcoming",
+  pending: "pending",
+  accepted: "accepted",
+  in_progress: "in_progress",
   completed: "completed",
   cancelled: "cancelled",
 } as const;
@@ -81,7 +83,9 @@ export type UpdateBookingBodyStatus =
   (typeof UpdateBookingBodyStatus)[keyof typeof UpdateBookingBodyStatus];
 
 export const UpdateBookingBodyStatus = {
-  upcoming: "upcoming",
+  pending: "pending",
+  accepted: "accepted",
+  in_progress: "in_progress",
   completed: "completed",
   cancelled: "cancelled",
 } as const;

@@ -37,6 +37,13 @@ export default defineConfig({
           path: path.resolve(apiClientReactSrc, "custom-fetch.ts"),
           name: "customFetch",
         },
+        // pnpm catalog: references in package.json (e.g. "catalog:") can't be
+        // version-compared, so Orval can't auto-detect react-query v5 and
+        // falls back to v4-shaped hook option types (queryKey required).
+        // Pin it explicitly so generated `query?:` options are `Partial<...>`.
+        query: {
+          version: 5,
+        },
       },
     },
   },

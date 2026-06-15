@@ -535,7 +535,7 @@ components:
           type: string
         status:
           type: string
-          enum: [upcoming, completed, cancelled]
+          enum: [pending, accepted, in_progress, completed, cancelled]
         price:
           type: integer
         address:
@@ -590,7 +590,7 @@ components:
       properties:
         status:
           type: string
-          enum: [upcoming, completed, cancelled]
+          enum: [pending, accepted, in_progress, completed, cancelled]
         rating:
           type: ["integer", "null"]
 
@@ -683,7 +683,7 @@ components:
           type: ['string', 'null']
         role:
           type: ['string', 'null']
-          enum: ['consumer', 'provider', null]
+          enum: ['consumer', 'provider', 'admin', null]
 
     AuthUserEnvelope:
       type: object

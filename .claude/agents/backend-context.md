@@ -10,7 +10,7 @@
 
 ## Latest Build Info
 - `pnpm --filter @workspace/api-server run typecheck` — PASSES (2026-06-15)
-- `pnpm --filter @workspace/api-server run test` — could not run on this machine: pre-existing `pnpm-workspace.yaml` `overrides` strip all non-linux-x64 native binaries (e.g. `@rollup/rollup-win32-x64-msvc`), so Vitest/Vite fails to start on Windows. See blockers.txt. Not caused by Task 0.1.
+- `pnpm --filter @workspace/api-server run test` — still cannot run locally on this Windows machine (pre-existing `pnpm-workspace.yaml` `overrides` strip all non-linux-x64 native binaries, e.g. `@rollup/rollup-win32-x64-msvc`). Resolved via `.github/workflows/test.yml` (GitHub Actions, ubuntu-latest) — see blockers.txt (API-SERVER-VITEST-WINDOWS resolved). Not caused by Task 0.1.
 
 ## Database Schema Reference
 - `lib/db/src/schema/`: auth (sessions), bookings, services, providers, profiles, reviews, notifications, lead-dispatch-attempts, vendor-subscriptions

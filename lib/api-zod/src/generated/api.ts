@@ -96,7 +96,13 @@ export const ListBookingsResponseItem = zod.object({
   providerInitials: zod.string(),
   date: zod.string(),
   time: zod.string(),
-  status: zod.enum(["upcoming", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "accepted",
+    "in_progress",
+    "completed",
+    "cancelled",
+  ]),
   price: zod.number(),
   address: zod.string(),
   rating: zod.number().nullish(),
@@ -134,7 +140,13 @@ export const GetBookingResponse = zod.object({
   providerInitials: zod.string(),
   date: zod.string(),
   time: zod.string(),
-  status: zod.enum(["upcoming", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "accepted",
+    "in_progress",
+    "completed",
+    "cancelled",
+  ]),
   price: zod.number(),
   address: zod.string(),
   rating: zod.number().nullish(),
@@ -149,7 +161,9 @@ export const UpdateBookingParams = zod.object({
 });
 
 export const UpdateBookingBody = zod.object({
-  status: zod.enum(["upcoming", "completed", "cancelled"]).optional(),
+  status: zod
+    .enum(["pending", "accepted", "in_progress", "completed", "cancelled"])
+    .optional(),
   rating: zod.number().nullish(),
 });
 
@@ -163,7 +177,13 @@ export const UpdateBookingResponse = zod.object({
   providerInitials: zod.string(),
   date: zod.string(),
   time: zod.string(),
-  status: zod.enum(["upcoming", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "accepted",
+    "in_progress",
+    "completed",
+    "cancelled",
+  ]),
   price: zod.number(),
   address: zod.string(),
   rating: zod.number().nullish(),
@@ -289,6 +309,7 @@ export const GetCurrentAuthUserResponse = zod.object({
         .union([
           zod.literal("consumer"),
           zod.literal("provider"),
+          zod.literal("admin"),
           zod.literal(null),
         ])
         .nullish(),
@@ -318,6 +339,7 @@ export const VerifyFirebaseIdTokenResponse = zod.object({
       .union([
         zod.literal("consumer"),
         zod.literal("provider"),
+        zod.literal("admin"),
         zod.literal(null),
       ])
       .nullish(),
@@ -371,6 +393,7 @@ export const SetUserRoleResponse = zod.object({
         .union([
           zod.literal("consumer"),
           zod.literal("provider"),
+          zod.literal("admin"),
           zod.literal(null),
         ])
         .nullish(),

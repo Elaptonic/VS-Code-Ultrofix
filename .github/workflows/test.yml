@@ -1,0 +1,31 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api-server-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Typecheck shared libs
+        run: corepack pnpm run typecheck:libs
+
+      - name: Run api-server tests
+        run: corepack pnpm --filter @workspace/api-server run test
+
+      - name: Run db package tests
+        run: corepack pnpm --filter @workspace/db run test

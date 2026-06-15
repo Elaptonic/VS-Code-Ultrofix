@@ -3,30 +3,37 @@
 ## Current Status
 Task 0.1 (session expiry / 401 handling) is complete on both backend and
 frontend. Two pre-existing issues were found during verification (2026-06-15)
-that do NOT block Task 0.1, but need their own follow-up task:
+and have now been resolved:
 
-1. URBAN-APP-TYPECHECK - BLOCKED - `pnpm --filter @workspace/urban-app run
-   typecheck` fails with 9 pre-existing errors across 5 files (none touched by
-   Task 0.1). This is the first time deps have been installed + typechecked on
-   this machine, so these were never caught before:
-   - app/_layout.tsx:68 - tuple type '[string]' has no index 1
-   - app/booking/[id].tsx:64,68,165 - UseQueryOptions missing 'queryKey'
-   - app/booking/[id].tsx:173 - BookingStatus vs "accepted" no overlap
-   - app/category/[id].tsx:29 - UseQueryOptions missing 'queryKey'
-   - app/service/[id].tsx:36,40 - UseQueryOptions missing 'queryKey'
-   - hooks/useProviderTracking.ts:57 - 'activeJob' possibly null
-   The "queryKey" errors look like an Orval/@tanstack/react-query version
-   mismatch in lib/api-client-react/src/generated/api.ts (generated file -
-   do not hand-edit; needs codegen/config investigation).
+1. URBAN-APP-TYPECHECK - RESOLVED (2026-06-15) - `pnpm --filter
+   @workspace/urban-app run typecheck` now passes (0 errors). Fixes:
+   - app/_layout.tsx:68 - cast `useSegments()` to `string[]` (no generated
+     typed-routes file in this checkout).
+   - app/booking/[id].tsx:64,68,165, app/category/[id].tsx:29,
+     app/service/[id].tsx:36,40 - "UseQueryOptions missing queryKey" was
+     caused by Orval not detecting @tanstack/react-query v5 (the
+     `lib/api-client-react/package.json` dependency uses a pnpm `catalog:`
+     version string, which Orval can't version-compare). Fixed by setting
+     `override.query.version = 5` in `lib/api-spec/orval.config.ts` and
+     re-running `pnpm --filter @workspace/api-spec run codegen` - generated
+     `query?:` options are now `Partial<UseQueryOptions<...>>`.
+   - app/booking/[id].tsx:173 - "BookingStatus vs 'accepted' no overlap" was
+     caused by `openapi.yaml`'s `Booking.status` / `UpdateBookingBody.status`
+     enum (`[upcoming, completed, cancelled]`) being out of sync with the DB
+     enum in `lib/db/src/schema/bookings.ts`
+     (`[pending, accepted, in_progress, completed, cancelled]`). Fixed the
+     enum in `openapi.yaml` to match the DB schema and regenerated.
+   - hooks/useProviderTracking.ts:57 - captured `activeJob` in a local
+     `const job` before the async closure (TS can't narrow a captured
+     parameter across an `await`).
 
-2. API-SERVER-VITEST-WINDOWS - BLOCKED - `pnpm --filter @workspace/api-server
-   run test` (and any Vitest/Vite run) fails on this Windows machine:
-   "Cannot find module @rollup/rollup-win32-x64-msvc". Cause: pnpm-workspace.yaml
-   `overrides` strips ALL non-linux-x64 native binaries (rollup, esbuild,
-   lightningcss, @tailwindcss/oxide, etc.) with the comment "replit uses
-   linux-x64 only". This blocks running tests locally on Windows. Needs a
-   decision: either add win32-x64 binaries back to overrides, or run tests in
-   a Linux environment/container.
+2. API-SERVER-VITEST-WINDOWS - RESOLVED (2026-06-15) - added
+   `.github/workflows/test.yml` (GitHub Actions, ubuntu-latest) running
+   `pnpm --filter @workspace/api-server run test` and
+   `pnpm --filter @workspace/db run test` on Linux, where the
+   pnpm-workspace.yaml `overrides` (linux-x64-only native binaries) are
+   correct. Tests still cannot run locally on this Windows machine - use CI
+   or a Linux/WSL environment for local Vitest runs.
 
 ## Frontend Task Dependencies
 - Any screen/hook consuming a new or changed API endpoint depends on:
