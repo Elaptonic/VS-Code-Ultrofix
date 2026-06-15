@@ -1,0 +1,23 @@
+# Blockers & Task Dependencies
+
+## Current Status
+No active blockers - all agents ready to start.
+
+## Frontend Task Dependencies
+- Any screen/hook consuming a new or changed API endpoint depends on:
+  1. Schema change in lib/db/src/schema/ (Backend Agent)
+  2. lib/api-spec/openapi.yaml updated + `pnpm --filter @workspace/api-spec run codegen` run
+  3. lib/api-zod and lib/api-client-react regenerated and typechecked
+
+## Backend Task Dependencies
+- Any route change that affects the API contract depends on:
+  1. lib/api-spec/openapi.yaml updated to match the new request/response shape
+  2. Codegen run so lib/api-zod stays in sync (Frontend Agent consumes this)
+
+## Unblocked Tasks
+- (none recorded yet - Analyst should populate from the active task list)
+
+## How to Update
+- Add one line per task: `<Task ID> - <BLOCKED|UNBLOCKED|WAITING> - <reason>`
+- Analyst updates this file after each review (see analyst.md section 6)
+- Frontend/Backend agents check this file before starting a task (pre-execution checklist)

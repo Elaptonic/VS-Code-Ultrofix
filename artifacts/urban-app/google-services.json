@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1015159560629",
+    "project_id": "ultrofix-e5ed6",
+    "storage_bucket": "ultrofix-e5ed6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015159560629:android:75ee681a80a91ffb07a1fc",
+        "android_client_info": {
+          "package_name": "com.android.ultrofix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXbJ47ShhPOt6B2_OwYjky_hSM2s8Wc2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

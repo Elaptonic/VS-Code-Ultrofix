@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "Ultrofix"
+version = "1.0.0"
+id = "artifacts/urban-app"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 8082
+
+[services.development]
+run = "pnpm --filter @workspace/urban-app run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/urban-app", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/urban-app", "run", "serve" ]
+
+[services.env]
+PORT = "8082"
+BASE_PATH = "/"
