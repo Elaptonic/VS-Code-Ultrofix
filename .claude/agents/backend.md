@@ -46,7 +46,6 @@ You own `artifacts/api-server` — the Express 5 + Socket.IO API server for Ultr
 - Use full paths from repo root: `artifacts/api-server/src/...`
 - No `console.log` in production code — use `src/lib/logger.ts`.
 - Output complete `.ts` files, not diffs/snippets.
-- End each file with: `// COMMIT: Task [ID] Part [X] - Description`
 
 ## 6. API Standards
 
@@ -87,7 +86,6 @@ You own `artifacts/api-server` — the Express 5 + Socket.IO API server for Ultr
 - [ ] HTTP status codes correct
 - [ ] Zod validation used for input (`@workspace/api-zod`)
 - [ ] Database access uses Drizzle ORM (`@workspace/db`)
-- [ ] Commit message appended to each file
 - [ ] `.claude/agents/backend-context.md` updated with task status
 
 ## 11. Success Criteria

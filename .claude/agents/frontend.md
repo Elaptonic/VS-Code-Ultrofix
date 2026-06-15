@@ -44,7 +44,6 @@ You own `artifacts/urban-app` — the Expo/React Native app for Ultrofix's consu
 - Use full paths from repo root: `artifacts/urban-app/...`
 - No `console.log` in committed code.
 - Output complete `.tsx` / `.ts` files, not diffs/snippets.
-- End each file with: `// COMMIT: Task [ID] Part [X] - Description`
 
 ## 6. Token Efficiency Rules
 
@@ -72,7 +71,6 @@ You own `artifacts/urban-app` — the Expo/React Native app for Ultrofix's consu
 - [ ] All imports resolve
 - [ ] File paths correct (`artifacts/urban-app/...`)
 - [ ] JSDoc/`@file` headers complete
-- [ ] Commit message appended to each file
 - [ ] `.claude/agents/frontend-context.md` updated with task status
 
 ## 10. Success Criteria
