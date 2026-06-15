@@ -8,7 +8,7 @@ import React, {
   type ReactNode,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import { setAuthTokenGetter, setUnauthorizedHandler } from "@workspace/api-client-react";
 import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import type { ConfirmationResult as WebConfirmationResult } from "firebase/auth";
@@ -214,6 +214,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUnauthorizedHandler(async () => {
       await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
       setUser(null);
+      Alert.alert("Session expired", "Please log in again.");
     });
     return () => setUnauthorizedHandler(null);
   }, []);
