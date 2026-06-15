@@ -47,7 +47,12 @@ and have now been resolved:
   2. Codegen run so lib/api-zod stays in sync (Frontend Agent consumes this)
 
 ## Unblocked Tasks
-- (none recorded yet - Analyst should populate from the active task list)
+- PAYMENT-MODE-CARD - UNBLOCKED - frontend picker (PaymentModeCard.tsx) added to
+  existing app/booking/[id].tsx payment step; local-state only, no backend
+  dependency; urban-app typecheck PASS.
+- BACKEND-APPTS-TSERRORS - UNBLOCKED - reported TS2349 (app.ts:12) and TS7006
+  (app.ts:15, app.ts:22) do not reproduce; api-server typecheck PASS (0
+  errors) with file unchanged. No fix applied.
 
 ## How to Update
 - Add one line per task: `<Task ID> - <BLOCKED|UNBLOCKED|WAITING> - <reason>`
