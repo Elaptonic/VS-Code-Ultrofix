@@ -1,7 +1,7 @@
 # Backend Agent - Context & Progress
 
 ## Current Session
-- Status: Task 0.1 (Session 401 Middleware) complete
+- Status: Task 0.2 (Comprehensive Error Handling) complete
 - Last updated: 2026-06-15
 
 ## Project Context
@@ -9,8 +9,8 @@
 - Stack: Express 5, Drizzle ORM (`@workspace/db`), Zod (`@workspace/api-zod`), Firebase JWKS auth, Stripe/Razorpay, pino logging
 
 ## Latest Build Info
-- `pnpm --filter @workspace/api-server run typecheck` — PASSES (2026-06-15)
-- `pnpm --filter @workspace/api-server run test` — still cannot run locally on this Windows machine (pre-existing `pnpm-workspace.yaml` `overrides` strip all non-linux-x64 native binaries, e.g. `@rollup/rollup-win32-x64-msvc`). Resolved via `.github/workflows/test.yml` (GitHub Actions, ubuntu-latest) — see blockers.txt (API-SERVER-VITEST-WINDOWS resolved). Not caused by Task 0.1.
+- `pnpm --filter @workspace/api-server run typecheck` — PASSES (2026-06-15, re-verified after Task 0.2)
+- `pnpm --filter @workspace/api-server run test` — still cannot run locally on this Windows machine (pre-existing `pnpm-workspace.yaml` `overrides` strip all non-linux-x64 native binaries, e.g. `@rollup/rollup-win32-x64-msvc`). Resolved via `.github/workflows/test.yml` (GitHub Actions, ubuntu-latest) — see blockers.txt (API-SERVER-VITEST-WINDOWS resolved). Not caused by Task 0.1 or 0.2.
 
 ## Database Schema Reference
 - `lib/db/src/schema/`: auth (sessions), bookings, services, providers, profiles, reviews, notifications, lead-dispatch-attempts, vendor-subscriptions
@@ -25,6 +25,7 @@
   - `src/routes/subscriptions.ts` (both routes)
   - `src/routes/reviews.ts` (both routes)
   - `src/routes/bookings.ts` (`GET /bookings/:id/dispatch-log`, admin-role check kept separate as 403)
+- Task 0.2 (Comprehensive Error Handling): wrapped every route handler in `src/routes/{bookings,providers,services,stats,subscriptions,profile,reviews,onboarding}.ts` (previously 0 try/catch each) in try/catch, returning `ErrorEnvelope` (`{ error: "Internal server error" }`, 500) on caught exceptions and logging via `logger.error({ err }, "...")` (`src/lib/logger.ts`). Also wrapped the `bookingQueue.process("start-service", ...)` background job in `bookings.ts` (unhandled rejection risk, not an HTTP route but in scope since it shares the file). `auth.ts`, `payments.ts`, `notifications.ts` already had try/catch and were left unchanged.
 
 ## Active Dependencies
 - See `.claude/agents/blockers.txt`
