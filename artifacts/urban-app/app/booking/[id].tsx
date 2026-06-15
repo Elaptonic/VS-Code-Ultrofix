@@ -22,6 +22,7 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { PaymentModeCard, type PaymentMode } from "@/components/PaymentModeCard";
 import { useApp } from "@/context/AppContext";
 import { useColors } from "@/hooks/useColors";
 import { useUserId } from "@/constants/user";
@@ -88,6 +89,7 @@ export default function BookingScreen() {
     razorpayKeyId: string | null;
   } | null>(null);
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>("upi");
   const [searchAttempts, setSearchAttempts] = useState(0);
 
   type BufferedEvent =
@@ -270,6 +272,22 @@ export default function BookingScreen() {
                 </Text>
               </View>
             )}
+          </View>
+
+          <View style={styles.paymentModeSection}>
+            <Text style={[styles.paymentModeTitle, { color: colors.foreground }]}>
+              Choose payment method
+            </Text>
+            <View style={styles.paymentModeGrid}>
+              {(["upi", "cash", "card", "netbanking"] as const).map((mode) => (
+                <PaymentModeCard
+                  key={mode}
+                  mode={mode}
+                  isSelected={paymentMode === mode}
+                  onSelect={() => setPaymentMode(mode)}
+                />
+              ))}
+            </View>
           </View>
 
           <View style={[styles.sandboxBadge, { backgroundColor: "#fef9c3", borderColor: "#fde047" }]}>
@@ -748,6 +766,9 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   sandboxText: { fontSize: 12, color: "#a16207", fontFamily: "Inter_500Medium" },
+  paymentModeSection: { width: "100%", gap: 10 },
+  paymentModeTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold", textAlign: "left" },
+  paymentModeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   homeBtn: { paddingVertical: 8 },
   homeBtnText: { fontSize: 14 },
 });
